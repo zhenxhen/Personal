@@ -18,26 +18,6 @@ interface DeviceProps {
   onPointerOut: () => void;
 }
 
-// Cleaner Glass Material for Bright Environment
-// const GlassMaterial = ({ color, active }: { color: string, active: boolean }) => (
-//   <MeshTransmissionMaterial
-//     backside
-//     samples={4}
-//     thickness={0.1}
-//     chromaticAberration={0.04}
-//     anisotropy={0.1}
-//     distortion={0.0}
-//     distortionScale={0.1}
-//     temporalDistortion={0.0}
-//     color={active ? color : '#e5e7eb'}
-//     emissive={active ? color : '#000000'}
-//     emissiveIntensity={active ? 0.2 : 0}
-//     toneMapped={true}
-//     roughness={0.05}
-//     metalness={0.1}
-//   />
-// );
-
 
 
 import * as BufferGeometryUtils from 'three/examples/jsm/utils/BufferGeometryUtils.js';
@@ -69,8 +49,8 @@ const useHoverAnimation = (initialY: number, isHovered: boolean, isSelected: boo
 
 export const XRHeadset: React.FC<DeviceProps> = ({ color, roughness, isSelected, isHovered, onClick, onPointerOver, onPointerOut }) => {
   const activeVisuals = isSelected || isHovered;
-  const obj = useLoader(OBJLoader, '/models/XR.obj');
-  const texture = useLoader(THREE.TextureLoader, '/models/XR.JPEG');
+  const obj = useLoader(OBJLoader, `${import.meta.env.BASE_URL}models/XR.obj`);
+  const texture = useLoader(THREE.TextureLoader, `${import.meta.env.BASE_URL}models/XR.JPEG`);
   // texture.flipY = false; // May need adjustment depending on UVs
   texture.colorSpace = THREE.SRGBColorSpace;
   const initialY = -.45;
@@ -118,12 +98,12 @@ export const XRHeadset: React.FC<DeviceProps> = ({ color, roughness, isSelected,
   );
 };
 
-useLoader.preload(OBJLoader, '/models/XR.obj');
+useLoader.preload(OBJLoader, `${import.meta.env.BASE_URL}models/XR.obj`);
 
 import { useGLTF } from '@react-three/drei';
 
 export const MobilePhone: React.FC<DeviceProps> = ({ color, roughness, isSelected, isHovered, onClick, onPointerOver, onPointerOut }) => {
-  const { scene } = useGLTF('/models/phone.glb');
+  const { scene } = useGLTF(`${import.meta.env.BASE_URL}models/phone.glb`);
   const initialY = -.1;
   const groupRef = useHoverAnimation(initialY, isHovered, isSelected);
 
@@ -158,7 +138,7 @@ export const MobilePhone: React.FC<DeviceProps> = ({ color, roughness, isSelecte
 };
 
 export const Tablet: React.FC<DeviceProps> = ({ color, roughness, isSelected, isHovered, onClick, onPointerOver, onPointerOut }) => {
-  const { scene } = useGLTF('/models/tablet.glb');
+  const { scene } = useGLTF(`${import.meta.env.BASE_URL}models/tablet.glb`);
   const initialY = -.13;
   const groupRef = useHoverAnimation(initialY, isHovered, isSelected);
 
@@ -192,7 +172,7 @@ export const Tablet: React.FC<DeviceProps> = ({ color, roughness, isSelected, is
 };
 
 export const Watch: React.FC<DeviceProps> = ({ color, roughness, isSelected, isHovered, onClick, onPointerOver, onPointerOut }) => {
-  const { scene } = useGLTF('/models/smartwatch.glb');
+  const { scene } = useGLTF(`${import.meta.env.BASE_URL}models/smartwatch.glb`);
   const initialY = 0.3;
   const groupRef = useHoverAnimation(initialY, isHovered, isSelected);
 
@@ -225,11 +205,11 @@ export const Watch: React.FC<DeviceProps> = ({ color, roughness, isSelected, isH
   );
 };
 
-useLoader.preload(OBJLoader, '/models/monitor.obj');
+useLoader.preload(OBJLoader, `${import.meta.env.BASE_URL}models/monitor.obj`);
 
 export const Monitor: React.FC<DeviceProps> = ({ isSelected, roughness, isHovered, onClick, onPointerOver, onPointerOut }) => {
-  const obj = useLoader(OBJLoader, '/models/monitor.obj');
-  const texture = useLoader(THREE.TextureLoader, '/models/monitor.JPEG');
+  const obj = useLoader(OBJLoader, `${import.meta.env.BASE_URL}models/monitor.obj`);
+  const texture = useLoader(THREE.TextureLoader, `${import.meta.env.BASE_URL}models/monitor.JPEG`);
   texture.colorSpace = THREE.SRGBColorSpace;
   // texture.flipY = false; // Adjust if texture is upside down
   const initialY = 1.3;
@@ -277,7 +257,7 @@ export const Monitor: React.FC<DeviceProps> = ({ isSelected, roughness, isHovere
 };
 
 export const Headphone: React.FC<DeviceProps> = ({ isSelected, roughness, isHovered, onClick, onPointerOver, onPointerOut }) => {
-  const { scene } = useGLTF('/models/headphone.glb');
+  const { scene } = useGLTF(`${import.meta.env.BASE_URL}models/headphone.glb`);
   const initialY = .27;
   const groupRef = useHoverAnimation(initialY, isHovered, isSelected);
 

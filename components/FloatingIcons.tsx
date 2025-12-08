@@ -3,9 +3,9 @@ import { useLoader } from '@react-three/fiber';
 import * as THREE from 'three';
 
 const FloatingIcons: React.FC = () => {
-    const calendarTex = useLoader(THREE.TextureLoader, '/3DUI/calendar.png');
-    const clockTex = useLoader(THREE.TextureLoader, '/3DUI/clock.png');
-    const reminderTex = useLoader(THREE.TextureLoader, '/3DUI/reminder.png');
+    const calendarTex = useLoader(THREE.TextureLoader, `${import.meta.env.BASE_URL}3DUI/calendar.png`);
+    const clockTex = useLoader(THREE.TextureLoader, `${import.meta.env.BASE_URL}3DUI/clock.png`);
+    const reminderTex = useLoader(THREE.TextureLoader, `${import.meta.env.BASE_URL}3DUI/reminder.png`);
 
     // Ensure SRGB encoding for correct color output
     calendarTex.colorSpace = THREE.SRGBColorSpace;
