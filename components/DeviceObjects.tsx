@@ -1,0 +1,311 @@
+import React, { useRef, useMemo, Suspense } from 'react';
+import { useFrame } from '@react-three/fiber';
+import { MeshTransmissionMaterial, RoundedBox } from '@react-three/drei';
+import { Group } from 'three';
+import { DeviceType } from '../types';
+import * as THREE from 'three';
+import { useLoader } from '@react-three/fiber';
+import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
+
+interface DeviceProps {
+  type: DeviceType;
+  color: string;
+  roughness?: number;
+  isSelected: boolean;
+  isHovered: boolean;
+  onClick: (e: any) => void;
+  onPointerOver: (e: any) => void;
+  onPointerOut: () => void;
+}
+
+// Cleaner Glass Material for Bright Environment
+// const GlassMaterial = ({ color, active }: { color: string, active: boolean }) => (
+//   <MeshTransmissionMaterial
+//     backside
+//     samples={4}
+//     thickness={0.1}
+//     chromaticAberration={0.04}
+//     anisotropy={0.1}
+//     distortion={0.0}
+//     distortionScale={0.1}
+//     temporalDistortion={0.0}
+//     color={active ? color : '#e5e7eb'}
+//     emissive={active ? color : '#000000'}
+//     emissiveIntensity={active ? 0.2 : 0}
+//     toneMapped={true}
+//     roughness={0.05}
+//     metalness={0.1}
+//   />
+// );
+
+
+
+import * as BufferGeometryUtils from 'three/examples/jsm/utils/BufferGeometryUtils.js';
+
+// Custom Hook for Smooth Hover Animation
+const useHoverAnimation = (initialY: number, isHovered: boolean, isSelected: boolean) => {
+  const groupRef = useRef<THREE.Group>(null);
+
+  useFrame((state, delta) => {
+    if (groupRef.current) {
+      let targetY = initialY;
+
+      if (isSelected) {
+        // Floating Animation: 0.1 to 0.2
+        targetY = initialY + 0.15 + Math.sin(state.clock.getElapsedTime() * 2) * 0.05;
+      } else if (isHovered) {
+        // Hover Lift: Fixed at 0.2
+        targetY = initialY + 0.2;
+      }
+
+      // Smoothly interpolate to the target position
+      // Using lerp prevents jumps when switching between states (e.g. Select -> Default)
+      groupRef.current.position.y = THREE.MathUtils.lerp(groupRef.current.position.y, targetY, delta * 5);
+    }
+  });
+
+  return groupRef;
+};
+
+export const XRHeadset: React.FC<DeviceProps> = ({ color, roughness, isSelected, isHovered, onClick, onPointerOver, onPointerOut }) => {
+  const activeVisuals = isSelected || isHovered;
+  const obj = useLoader(OBJLoader, '/models/XR.obj');
+  const texture = useLoader(THREE.TextureLoader, '/models/XR.JPEG');
+  // texture.flipY = false; // May need adjustment depending on UVs
+  texture.colorSpace = THREE.SRGBColorSpace;
+  const initialY = -.45;
+  const groupRef = useHoverAnimation(initialY, isHovered, isSelected);
+
+  const clone = useMemo(() => {
+    const clonedScene = obj.clone();
+    clonedScene.traverse((child: any) => {
+      if (child.isMesh) {
+        // Smooth shading logic
+        if (child.geometry) {
+          child.geometry.deleteAttribute('normal');
+          child.geometry = BufferGeometryUtils.mergeVertices(child.geometry, 1e-4);
+          child.geometry.computeVertexNormals();
+        }
+
+        child.material = new THREE.MeshStandardMaterial({
+          map: texture,
+          color: "#ffffff", // White to tint texture correctly
+          roughness: roughness ?? 0.5,
+          metalness: 0.1
+        });
+        child.castShadow = true;
+        child.receiveShadow = true;
+      }
+    });
+    return clonedScene;
+  }, [obj, texture, roughness]);
+
+  return (
+    <group
+      ref={groupRef}
+      //XR position
+      onClick={onClick}
+      onPointerOver={onPointerOver}
+      onPointerOut={onPointerOut}
+      position={[2.5, initialY, 0]} // Resting position
+    >
+      <primitive
+        object={clone}
+        scale={2}
+        rotation={[0, Math.PI / 2 + Math.PI - .8, 0]}
+      />
+    </group>
+  );
+};
+
+useLoader.preload(OBJLoader, '/models/XR.obj');
+
+import { useGLTF } from '@react-three/drei';
+
+export const MobilePhone: React.FC<DeviceProps> = ({ color, roughness, isSelected, isHovered, onClick, onPointerOver, onPointerOut }) => {
+  const { scene } = useGLTF('/models/phone.glb');
+  const initialY = -.1;
+  const groupRef = useHoverAnimation(initialY, isHovered, isSelected);
+
+  // Clone the scene to allow independent rendering if used multiple times
+  const clone = useMemo(() => {
+    const c = scene.clone();
+    c.traverse((child: any) => {
+      if (child.isMesh && child.material) {
+        child.material = child.material.clone();
+        child.material.roughness = roughness ?? 1; // Default from user edit
+      }
+    });
+    return c;
+  }, [scene, roughness]);
+
+  // phone position
+  return (
+    <group
+      ref={groupRef}
+      position={[-1.2, initialY, -1.5]} // Phone GLB likely has its own centering, adjusting on desk in Experience might be needed or here
+      rotation={[0, Math.PI / 2 + Math.PI, Math.PI / 2]} // Default rotation
+      onClick={onClick}
+      onPointerOver={onPointerOver}
+      onPointerOut={onPointerOut}
+    >
+      <primitive
+        object={clone}
+        scale={1.5} // Heuristic scale, similar to Monitor/XR
+      />
+    </group>
+  );
+};
+
+export const Tablet: React.FC<DeviceProps> = ({ color, roughness, isSelected, isHovered, onClick, onPointerOver, onPointerOut }) => {
+  const { scene } = useGLTF('/models/tablet.glb');
+  const initialY = -.13;
+  const groupRef = useHoverAnimation(initialY, isHovered, isSelected);
+
+  const clone = useMemo(() => {
+    const c = scene.clone();
+    c.traverse((child: any) => {
+      if (child.isMesh && child.material) {
+        child.material = child.material.clone();
+        child.material.roughness = roughness ?? 1;
+      }
+    });
+    return c;
+  }, [scene, roughness]);
+
+  // tablet position
+  return (
+    <group
+      ref={groupRef}
+      position={[-5.3, initialY, -0.5]}
+      rotation={[0, Math.PI, Math.PI / 2]}
+      onClick={onClick}
+      onPointerOver={onPointerOver}
+      onPointerOut={onPointerOut}
+    >
+      <primitive
+        object={clone}
+        scale={2.5}
+      />
+    </group>
+  );
+};
+
+export const Watch: React.FC<DeviceProps> = ({ color, roughness, isSelected, isHovered, onClick, onPointerOver, onPointerOut }) => {
+  const { scene } = useGLTF('/models/smartwatch.glb');
+  const initialY = 0.3;
+  const groupRef = useHoverAnimation(initialY, isHovered, isSelected);
+
+  const clone = useMemo(() => {
+    const c = scene.clone();
+    c.traverse((child: any) => {
+      if (child.isMesh && child.material) {
+        child.material = child.material.clone();
+        child.material.roughness = roughness ?? 1;
+      }
+    });
+    return c;
+  }, [scene, roughness]);
+
+  // watch position
+  return (
+    <group
+      ref={groupRef}
+      position={[-2, initialY, -2]}
+      rotation={[0, Math.PI * -.5, 0]}
+      onClick={onClick}
+      onPointerOver={onPointerOver}
+      onPointerOut={onPointerOut}
+    >
+      <primitive
+        object={clone}
+        scale={0.8}
+      />
+    </group>
+  );
+};
+
+useLoader.preload(OBJLoader, '/models/monitor.obj');
+
+export const Monitor: React.FC<DeviceProps> = ({ isSelected, roughness, isHovered, onClick, onPointerOver, onPointerOut }) => {
+  const obj = useLoader(OBJLoader, '/models/monitor.obj');
+  const texture = useLoader(THREE.TextureLoader, '/models/monitor.JPEG');
+  texture.colorSpace = THREE.SRGBColorSpace;
+  // texture.flipY = false; // Adjust if texture is upside down
+  const initialY = 1.3;
+  const groupRef = useHoverAnimation(initialY, isHovered, isSelected);
+
+  const clone = useMemo(() => {
+    const clonedScene = obj.clone();
+    clonedScene.traverse((child: any) => {
+      if (child.isMesh) {
+        if (child.geometry) {
+          child.geometry.deleteAttribute('normal');
+          child.geometry = BufferGeometryUtils.mergeVertices(child.geometry, 1e-4);
+          child.geometry.computeVertexNormals();
+        }
+
+        child.material = new THREE.MeshStandardMaterial({
+          map: texture,
+          color: "#ffffff",
+          roughness: roughness ?? 1,
+          metalness: 0.1
+        });
+        child.castShadow = true;
+        child.receiveShadow = true;
+      }
+    });
+    return clonedScene;
+  }, [obj, texture, roughness]);
+
+  return (
+    <group
+      ref={groupRef}
+      //monitor position
+      onClick={onClick}
+      onPointerOver={onPointerOver}
+      onPointerOut={onPointerOut}
+      position={[0, initialY, .5]}
+    >
+      <primitive
+        object={clone}
+        scale={3} // Adjust scale as needed based on model units
+        rotation={[0, Math.PI / 2 + 3.14, 0]} // Rotate to face front if needed
+      />
+    </group>
+  );
+};
+
+export const Headphone: React.FC<DeviceProps> = ({ isSelected, roughness, isHovered, onClick, onPointerOver, onPointerOut }) => {
+  const { scene } = useGLTF('/models/headphone.glb');
+  const initialY = .27;
+  const groupRef = useHoverAnimation(initialY, isHovered, isSelected);
+
+  const clone = useMemo(() => {
+    const c = scene.clone();
+    c.traverse((child: any) => {
+      if (child.isMesh && child.material) {
+        child.material = child.material.clone();
+        child.material.roughness = roughness ?? 1;
+      }
+    });
+    return c;
+  }, [scene, roughness]);
+
+  return (
+    <group
+      ref={groupRef}
+      //headphone position
+      onClick={onClick}
+      onPointerOver={onPointerOver}
+      onPointerOut={onPointerOut}
+      position={[0, initialY, -1.4]} // Initial position, will valid in Experience
+    >
+      <primitive
+        object={clone}
+        scale={1.4} // Heuristic scale
+        rotation={[0, Math.PI / 2 + 2, Math.PI / 2 + .2]}
+      />
+    </group>
+  );
+};
