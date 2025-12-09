@@ -103,9 +103,9 @@ export const XRHeadset: React.FC<DeviceProps> = ({ color, roughness, isSelected,
 
 export const MobilePhone: React.FC<DeviceProps> = ({ color, roughness, isSelected, isHovered, onClick, onPointerOver, onPointerOut }) => {
   const { scene } = useGLTF(`${import.meta.env.BASE_URL}models/phone.glb`);
-  const initialY = -.1;
+  const initialY = -.15;
   const baseRotation: [number, number, number] = [0, Math.PI / 2 + Math.PI, Math.PI / 2];
-  const tiltRotation: [number, number, number] = [.3, Math.PI / 2 + Math.PI, Math.PI / 2]; // Tilt forward (negative X)
+  const tiltRotation: [number, number, number] = [0.3, Math.PI / 2 + Math.PI, Math.PI / 2]; // Tilt forward (negative X)
   const groupRef = useHoverAnimation(initialY, isHovered, isSelected, baseRotation, tiltRotation, 0.2);
 
   // Clone the scene to allow independent rendering if used multiple times
@@ -124,7 +124,7 @@ export const MobilePhone: React.FC<DeviceProps> = ({ color, roughness, isSelecte
   return (
     <group
       ref={groupRef}
-      position={[-1.2, initialY, -1.5]} // Phone GLB likely has its own centering, adjusting on desk in Experience might be needed or here
+      position={[-0.8, initialY, -1.5]} // Phone GLB likely has its own centering, adjusting on desk in Experience might be needed or here
       rotation={[0, Math.PI / 2 + Math.PI, Math.PI / 2]} // Default rotation
       onClick={onClick}
       onPointerOver={onPointerOver}
@@ -132,7 +132,7 @@ export const MobilePhone: React.FC<DeviceProps> = ({ color, roughness, isSelecte
     >
       <primitive
         object={clone}
-        scale={1.5} // Heuristic scale, similar to Monitor/XR
+        scale={.4} // Heuristic scale, similar to Monitor/XR
       />
     </group>
   );
@@ -142,7 +142,7 @@ export const Tablet: React.FC<DeviceProps> = ({ color, roughness, isSelected, is
   const { scene } = useGLTF(`${import.meta.env.BASE_URL}models/tablet.glb`);
   const initialY = -.13;
   const baseRotation: [number, number, number] = [0, Math.PI, Math.PI / 2];
-  const tiltRotation: [number, number, number] = [0.2, Math.PI + .1, Math.PI / 2]; // Tilt forward
+  const tiltRotation: [number, number, number] = [0.2, Math.PI, Math.PI / 2]; // Tilt forward
   const groupRef = useHoverAnimation(initialY, isHovered, isSelected, baseRotation, tiltRotation, 0.2);
 
   const clone = useMemo(() => {
@@ -168,7 +168,7 @@ export const Tablet: React.FC<DeviceProps> = ({ color, roughness, isSelected, is
     >
       <primitive
         object={clone}
-        scale={2.5}
+        scale={2.7}
       />
     </group>
   );
@@ -176,7 +176,7 @@ export const Tablet: React.FC<DeviceProps> = ({ color, roughness, isSelected, is
 
 export const Watch: React.FC<DeviceProps> = ({ color, roughness, isSelected, isHovered, onClick, onPointerOver, onPointerOut }) => {
   const { scene } = useGLTF(`${import.meta.env.BASE_URL}models/smartwatch.glb`);
-  const initialY = 0.3;
+  const initialY = 0.1;
   const groupRef = useHoverAnimation(initialY, isHovered, isSelected);
 
   const clone = useMemo(() => {
@@ -194,15 +194,15 @@ export const Watch: React.FC<DeviceProps> = ({ color, roughness, isSelected, isH
   return (
     <group
       ref={groupRef}
-      position={[-2, initialY, -2]}
-      rotation={[0, Math.PI * -.5, 0]}
+      position={[-1, initialY, -2]}
+      rotation={[0, Math.PI / 2 + Math.PI, 0]}
       onClick={onClick}
       onPointerOver={onPointerOver}
       onPointerOut={onPointerOut}
     >
       <primitive
         object={clone}
-        scale={0.8}
+        scale={0.4}
       />
     </group>
   );
