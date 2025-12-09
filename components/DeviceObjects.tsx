@@ -1,11 +1,10 @@
-import React, { useRef, useMemo, Suspense } from 'react';
-import { useFrame } from '@react-three/fiber';
-import { MeshTransmissionMaterial, RoundedBox } from '@react-three/drei';
-import { Group } from 'three';
-import { DeviceType } from '../types';
+import React, { useRef, useMemo } from 'react';
+import { useFrame, useLoader } from '@react-three/fiber';
+import { useGLTF } from '@react-three/drei';
 import * as THREE from 'three';
-import { useLoader } from '@react-three/fiber';
-import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
+import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';
+import * as BufferGeometryUtils from 'three/examples/jsm/utils/BufferGeometryUtils.js';
+import { DeviceType } from '../types';
 
 interface DeviceProps {
   type: DeviceType;
@@ -20,7 +19,7 @@ interface DeviceProps {
 
 
 
-import * as BufferGeometryUtils from 'three/examples/jsm/utils/BufferGeometryUtils.js';
+
 
 // Custom Hook for Smooth Hover Animation
 const useHoverAnimation = (
@@ -117,7 +116,7 @@ export const XRHeadset: React.FC<DeviceProps> = ({ color, roughness, isSelected,
 
 useLoader.preload(OBJLoader, `${import.meta.env.BASE_URL}models/XR.obj`);
 
-import { useGLTF } from '@react-three/drei';
+
 
 export const MobilePhone: React.FC<DeviceProps> = ({ color, roughness, isSelected, isHovered, onClick, onPointerOver, onPointerOut }) => {
   const { scene } = useGLTF(`${import.meta.env.BASE_URL}models/phone.glb`);

@@ -164,7 +164,7 @@ const SceneContent: React.FC<SceneContentProps> = ({ currentProjectId, onProject
   // Calculate initial zoom immediately for the camera prop
   // Math.max(50, Math.min(75, (window.innerWidth / 1200) * 100))
   const initialZoom = typeof window !== 'undefined'
-    ? Math.max(50, Math.min(100, (window.innerWidth / 1600) * 100))
+    ? Math.max(50, Math.min(50, (window.innerWidth / 1600) * 100))
     : 50;
 
   // Sync Camera with Settings - Runs ONLY if props are provided (Admin Mode)
@@ -190,7 +190,7 @@ const SceneContent: React.FC<SceneContentProps> = ({ currentProjectId, onProject
     const handleResize = () => {
       if (controlsRef.current) {
         // Calculate zoom based on width: 50 at <600px, 100 at >=1600px
-        const newZoom = Math.max(50, Math.min(100, (window.innerWidth / 1600) * 100));
+        const newZoom = Math.max(20, Math.min(100, (window.innerWidth / 1600) * 100));
         controlsRef.current.zoomTo(newZoom, true);
       }
     };
@@ -270,7 +270,7 @@ const SceneContent: React.FC<SceneContentProps> = ({ currentProjectId, onProject
         maxAzimuthAngle={1}
         dollySpeed={0} // Disable Scroll Zoom via speed
         mouseButtons={{ left: 1, middle: 0, right: 0, wheel: 0 }} // Disable wheel capture to allow page scroll
-        touches={{ one: 0, two: 32, three: 0 }} // One finger scrolls (native), Two fingers rotate
+        touches={{ one: 32, two: 0, three: 0 }} // Disable touch zoom to allow page scroll
         smoothTime={1} // Slower animation
         enabled={true}
       />
@@ -388,7 +388,6 @@ export const Experience: React.FC<ExperienceProps> = (props) => {
         shadows
         dpr={[1, 2]}
         className="w-full h-full bg-white"
-        style={{ touchAction: 'pan-y' }}
         onPointerMissed={() => props.onProjectSelect(null)}
       >
         <color attach="background" args={['#ffffff']} />
