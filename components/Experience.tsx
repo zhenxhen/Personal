@@ -167,9 +167,6 @@ const SceneContent: React.FC<SceneContentProps> = ({ currentProjectId, onProject
     return Math.max(40, Math.min(100, (window.innerWidth / 1600) * 100));
   };
 
-  // Check if mobile for scroll interactions
-  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
-
   const initialZoom = getResponsiveZoom();
 
   // Sync Camera with Settings - Runs ONLY if props are provided (Admin Mode)
@@ -281,9 +278,9 @@ const SceneContent: React.FC<SceneContentProps> = ({ currentProjectId, onProject
         maxAzimuthAngle={1}
         dollySpeed={0} // Disable Scroll Zoom via speed
         mouseButtons={{ left: 1, middle: 0, right: 0, wheel: 0 }} // Disable wheel capture to allow page scroll
-        touches={{ one: 0, two: 0, three: 0 }} // Disable touch zoom to allow page scroll
-        // On mobile, we want to be extra sure the camera doesn't steal touches
-        enabled={!isMobile}
+        touches={{ one: 1, two: 0, three: 0 }} // Enable touch rotation (1=ROTATE) to match mouse
+        smoothTime={1} // Slower animation
+        enabled={true}
       />
 
       <LightingController />
@@ -398,9 +395,8 @@ export const Experience: React.FC<ExperienceProps> = (props) => {
       <Canvas
         shadows
         dpr={[1, 2]}
-        className="w-full h-full bg-white"
+        className="w-full h-full bg-white touch-none"
         onPointerMissed={() => props.onProjectSelect(null)}
-        style={{ touchAction: 'pan-y' }}
       >
         <color attach="background" args={['#ffffff']} />
         <React.Suspense fallback={null}>
