@@ -2,8 +2,7 @@ import React, { useRef, useMemo } from 'react';
 import { useFrame, useLoader } from '@react-three/fiber';
 import { useGLTF } from '@react-three/drei';
 import * as THREE from 'three';
-import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';
-import * as BufferGeometryUtils from 'three/examples/jsm/utils/BufferGeometryUtils.js';
+
 import { DeviceType } from '../types';
 
 interface DeviceProps {
@@ -66,7 +65,9 @@ const useHoverAnimation = (
 export const XRHeadset: React.FC<DeviceProps> = ({ color, roughness, isSelected, isHovered, onClick, onPointerOver, onPointerOut }) => {
   const { scene } = useGLTF(`${import.meta.env.BASE_URL}models/XR.glb`);
   const initialY = -.8;
-  const groupRef = useHoverAnimation(initialY, isHovered, isSelected);
+  const baseRotation: [number, number, number] = [0, Math.PI + .8, 0];
+  const tiltRotation: [number, number, number] = [-.3, Math.PI + .8, 0];
+  const groupRef = useHoverAnimation(initialY, isHovered, isSelected, baseRotation, tiltRotation, 0);
 
   const clone = useMemo(() => {
     const c = scene.clone();
@@ -87,11 +88,11 @@ export const XRHeadset: React.FC<DeviceProps> = ({ color, roughness, isSelected,
       onPointerOver={onPointerOver}
       onPointerOut={onPointerOut}
       position={[2.5, initialY, 0]} // Resting position
+      rotation={baseRotation}
     >
       <primitive
         object={clone}
         scale={2.5}
-        rotation={[0, Math.PI + .8, 0]}
       />
     </group>
   );
@@ -104,9 +105,10 @@ export const XRHeadset: React.FC<DeviceProps> = ({ color, roughness, isSelected,
 export const MobilePhone: React.FC<DeviceProps> = ({ color, roughness, isSelected, isHovered, onClick, onPointerOver, onPointerOut }) => {
   const { scene } = useGLTF(`${import.meta.env.BASE_URL}models/phone.glb`);
   const initialY = -.15;
-  const baseRotation: [number, number, number] = [0, Math.PI / 2 + Math.PI, Math.PI / 2];
-  const tiltRotation: [number, number, number] = [0.3, Math.PI / 2 + Math.PI, Math.PI / 2]; // Tilt forward (negative X)
-  const groupRef = useHoverAnimation(initialY, isHovered, isSelected, baseRotation, tiltRotation, 0.2);
+  const baseRotation: [number, number, number] = [0, Math.PI / 2 + Math.PI + 0.3, Math.PI / 2];
+  const tiltRotation: [number, number, number] = [-2.4, Math.PI / 2 + Math.PI + 2.7, 1.2]; // Tilt forward (negative X)
+  // const tiltRotation: [number, number, number] = [Math.PI - 1, Math.PI / 2 + Math.PI + 3, Math.PI]; // Tilt forward (negative X)
+  const groupRef = useHoverAnimation(initialY, isHovered, isSelected, baseRotation, tiltRotation, 0.7);
 
   // Clone the scene to allow independent rendering if used multiple times
   const clone = useMemo(() => {
@@ -124,8 +126,8 @@ export const MobilePhone: React.FC<DeviceProps> = ({ color, roughness, isSelecte
   return (
     <group
       ref={groupRef}
-      position={[-0.8, initialY, -1.5]} // Phone GLB likely has its own centering, adjusting on desk in Experience might be needed or here
-      rotation={[0, Math.PI / 2 + Math.PI, Math.PI / 2]} // Default rotation
+      position={[-0.5, initialY, -0.5]} // Phone GLB likely has its own centering, adjusting on desk in Experience might be needed or here
+      rotation={baseRotation}
       onClick={onClick}
       onPointerOver={onPointerOver}
       onPointerOut={onPointerOut}
@@ -141,9 +143,9 @@ export const MobilePhone: React.FC<DeviceProps> = ({ color, roughness, isSelecte
 export const Tablet: React.FC<DeviceProps> = ({ color, roughness, isSelected, isHovered, onClick, onPointerOver, onPointerOut }) => {
   const { scene } = useGLTF(`${import.meta.env.BASE_URL}models/tablet.glb`);
   const initialY = -.13;
-  const baseRotation: [number, number, number] = [0, Math.PI, Math.PI / 2];
-  const tiltRotation: [number, number, number] = [0.2, Math.PI, Math.PI / 2]; // Tilt forward
-  const groupRef = useHoverAnimation(initialY, isHovered, isSelected, baseRotation, tiltRotation, 0.2);
+  const baseRotation: [number, number, number] = [0, Math.PI - .3, Math.PI / 2];
+  const tiltRotation: [number, number, number] = [0.3, Math.PI + .1, Math.PI / 2]; // Tilt forward
+  const groupRef = useHoverAnimation(initialY, isHovered, isSelected, baseRotation, tiltRotation, 0.4);
 
   const clone = useMemo(() => {
     const c = scene.clone();
@@ -160,15 +162,15 @@ export const Tablet: React.FC<DeviceProps> = ({ color, roughness, isSelected, is
   return (
     <group
       ref={groupRef}
-      position={[-5.3, initialY, -0.5]}
-      rotation={[0, Math.PI, Math.PI / 2]}
+      position={[-4.8, initialY, -0.5]}
+      rotation={baseRotation}
       onClick={onClick}
       onPointerOver={onPointerOver}
       onPointerOut={onPointerOut}
     >
       <primitive
         object={clone}
-        scale={2.7}
+        scale={2.2}
       />
     </group>
   );
@@ -177,7 +179,9 @@ export const Tablet: React.FC<DeviceProps> = ({ color, roughness, isSelected, is
 export const Watch: React.FC<DeviceProps> = ({ color, roughness, isSelected, isHovered, onClick, onPointerOver, onPointerOut }) => {
   const { scene } = useGLTF(`${import.meta.env.BASE_URL}models/smartwatch.glb`);
   const initialY = 0.1;
-  const groupRef = useHoverAnimation(initialY, isHovered, isSelected);
+  const baseRotation: [number, number, number] = [0, Math.PI / 2 + Math.PI, 0];
+  const tiltRotation: [number, number, number] = [-Math.PI / 2 - 0.5, Math.PI / 2 + Math.PI + 1, -1.5]; // Tilt forward
+  const groupRef = useHoverAnimation(initialY, isHovered, isSelected, baseRotation, tiltRotation, 0.4);
 
   const clone = useMemo(() => {
     const c = scene.clone();
@@ -194,8 +198,9 @@ export const Watch: React.FC<DeviceProps> = ({ color, roughness, isSelected, isH
   return (
     <group
       ref={groupRef}
-      position={[-1, initialY, -2]}
-      rotation={[0, Math.PI / 2 + Math.PI, 0]}
+      position={[-1, initialY, -1.5]}
+      rotation={baseRotation}
+      // Rotation handled by hook now
       onClick={onClick}
       onPointerOver={onPointerOver}
       onPointerOut={onPointerOut}
@@ -208,38 +213,23 @@ export const Watch: React.FC<DeviceProps> = ({ color, roughness, isSelected, isH
   );
 };
 
-useLoader.preload(OBJLoader, `${import.meta.env.BASE_URL}models/monitor.obj`);
-
 export const Monitor: React.FC<DeviceProps> = ({ isSelected, roughness, isHovered, onClick, onPointerOver, onPointerOut }) => {
-  const obj = useLoader(OBJLoader, `${import.meta.env.BASE_URL}models/monitor.obj`);
-  const texture = useLoader(THREE.TextureLoader, `${import.meta.env.BASE_URL}models/monitor.JPEG`);
-  texture.colorSpace = THREE.SRGBColorSpace;
-  // texture.flipY = false; // Adjust if texture is upside down
-  const initialY = 1.3;
-  const groupRef = useHoverAnimation(initialY, isHovered, isSelected);
+  const { scene } = useGLTF(`${import.meta.env.BASE_URL}models/monitor.glb`);
+  const initialY = 0;
+  const baseRotation: [number, number, number] = [0, 0, 0];
+  const tiltRotation: [number, number, number] = [0, 0, 0];
+  const groupRef = useHoverAnimation(initialY, isHovered, isSelected, baseRotation, tiltRotation, 0.2);
 
   const clone = useMemo(() => {
-    const clonedScene = obj.clone();
-    clonedScene.traverse((child: any) => {
-      if (child.isMesh) {
-        if (child.geometry) {
-          child.geometry.deleteAttribute('normal');
-          child.geometry = BufferGeometryUtils.mergeVertices(child.geometry, 1e-4);
-          child.geometry.computeVertexNormals();
-        }
-
-        child.material = new THREE.MeshStandardMaterial({
-          map: texture,
-          color: "#ffffff",
-          roughness: roughness ?? 1,
-          metalness: 0.1
-        });
-        child.castShadow = true;
-        child.receiveShadow = true;
+    const c = scene.clone();
+    c.traverse((child: any) => {
+      if (child.isMesh && child.material) {
+        child.material = child.material.clone();
+        child.material.roughness = roughness ?? 1;
       }
     });
-    return clonedScene;
-  }, [obj, texture, roughness]);
+    return c;
+  }, [scene, roughness]);
 
   return (
     <group
@@ -248,12 +238,12 @@ export const Monitor: React.FC<DeviceProps> = ({ isSelected, roughness, isHovere
       onClick={onClick}
       onPointerOver={onPointerOver}
       onPointerOut={onPointerOut}
-      position={[0, initialY, .5]}
+      position={[0, initialY, .2]}
+      rotation={baseRotation}
     >
       <primitive
         object={clone}
-        scale={3} // Adjust scale as needed based on model units
-        rotation={[0, Math.PI / 2 + 3.14, 0]} // Rotate to face front if needed
+        scale={5.5} // Adjust scale as needed based on model units
       />
     </group>
   );
