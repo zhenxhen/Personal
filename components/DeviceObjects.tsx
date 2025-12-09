@@ -64,37 +64,20 @@ const useHoverAnimation = (
 };
 
 export const XRHeadset: React.FC<DeviceProps> = ({ color, roughness, isSelected, isHovered, onClick, onPointerOver, onPointerOut }) => {
-  const activeVisuals = isSelected || isHovered;
-  const obj = useLoader(OBJLoader, `${import.meta.env.BASE_URL}models/XR.obj`);
-  const texture = useLoader(THREE.TextureLoader, `${import.meta.env.BASE_URL}models/XR.JPEG`);
-  // texture.flipY = false; // May need adjustment depending on UVs
-  texture.colorSpace = THREE.SRGBColorSpace;
+  const { scene } = useGLTF(`${import.meta.env.BASE_URL}models/XR.glb`);
   const initialY = -.45;
   const groupRef = useHoverAnimation(initialY, isHovered, isSelected);
 
   const clone = useMemo(() => {
-    const clonedScene = obj.clone();
-    clonedScene.traverse((child: any) => {
-      if (child.isMesh) {
-        // Smooth shading logic
-        if (child.geometry) {
-          child.geometry.deleteAttribute('normal');
-          child.geometry = BufferGeometryUtils.mergeVertices(child.geometry, 1e-4);
-          child.geometry.computeVertexNormals();
-        }
-
-        child.material = new THREE.MeshStandardMaterial({
-          map: texture,
-          color: "#ffffff", // White to tint texture correctly
-          roughness: roughness ?? 0.5,
-          metalness: 0.1
-        });
-        child.castShadow = true;
-        child.receiveShadow = true;
+    const c = scene.clone();
+    c.traverse((child: any) => {
+      if (child.isMesh && child.material) {
+        child.material = child.material.clone();
+        child.material.roughness = roughness ?? 1;
       }
     });
-    return clonedScene;
-  }, [obj, texture, roughness]);
+    return c;
+  }, [scene, roughness]);
 
   return (
     <group
@@ -114,7 +97,7 @@ export const XRHeadset: React.FC<DeviceProps> = ({ color, roughness, isSelected,
   );
 };
 
-useLoader.preload(OBJLoader, `${import.meta.env.BASE_URL}models/XR.obj`);
+
 
 
 

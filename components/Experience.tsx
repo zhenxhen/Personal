@@ -161,11 +161,16 @@ interface SceneContentProps extends ExperienceProps {
 const SceneContent: React.FC<SceneContentProps> = ({ currentProjectId, onProjectSelect, cameraSettings, hoveredId, setHoveredId }) => {
   const controlsRef = useRef<CameraControls>(null);
 
-  // Calculate initial zoom immediately for the camera prop
-  // Math.max(50, Math.min(75, (window.innerWidth / 1200) * 100))
-  const initialZoom = typeof window !== 'undefined'
-    ? Math.max(50, Math.min(50, (window.innerWidth / 1600) * 100))
-    : 50;
+  // Calculate responsive zoom based on window width
+  const getResponsiveZoom = () => {
+    if (typeof window === 'undefined') return 50;
+    return Math.max(40, Math.min(100, (window.innerWidth / 1600) * 100));
+  };
+
+  // Check if mobile for scroll interactions
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+
+  const initialZoom = getResponsiveZoom();
 
   // Sync Camera with Settings - Runs ONLY if props are provided (Admin Mode)
   useEffect(() => {
@@ -189,9 +194,9 @@ const SceneContent: React.FC<SceneContentProps> = ({ currentProjectId, onProject
   useEffect(() => {
     const handleResize = () => {
       if (controlsRef.current) {
-        // Calculate zoom based on width: 50 at <600px, 100 at >=1600px
-        const newZoom = Math.max(20, Math.min(100, (window.innerWidth / 1600) * 100));
-        controlsRef.current.zoomTo(newZoom, true);
+        // Return to responsive zoom level
+        const defaultZoom = getResponsiveZoom();
+        controlsRef.current.zoomTo(defaultZoom, true);
       }
     };
 
@@ -200,12 +205,7 @@ const SceneContent: React.FC<SceneContentProps> = ({ currentProjectId, onProject
 
     // Camera Entry Animation
     if (controlsRef.current) {
-      // 1. Instantly jumping to "Front View" (Azimuth 0, Polar PI/2)
-      // We use a position like [0, 0, 50] looking at [0, 0, 0] to simulate basic front view
       controlsRef.current.setLookAt(0, 0, 50, 0, 0, 0, false);
-
-      // 2. Animate to "Isometric View" (Position [-20, 20, 40]) look at [0, 0, 0]
-      // Need a small timeout to allow the initial position to "set" before animating from it.
       setTimeout(() => {
         controlsRef.current?.setLookAt(-20, 20, 40, 0, 0, 0, true);
       }, 50);
@@ -213,27 +213,38 @@ const SceneContent: React.FC<SceneContentProps> = ({ currentProjectId, onProject
 
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Zoom & Focus Animation Effect
   useEffect(() => {
-    if (controlsRef.current) {
-      if (currentProjectId && FOCUS_TARGETS[currentProjectId]) {
-        // Focus on selected object
-        const { target, zoom } = FOCUS_TARGETS[currentProjectId];
-        controlsRef.current.setTarget(...target, true);
-        controlsRef.current.zoomTo(zoom, true);
-      } else {
-        // Reset to default view
-        controlsRef.current.setTarget(0, 0, 0, true);
+    const updateCamera = () => {
+      if (controlsRef.current) {
+        if (currentProjectId && FOCUS_TARGETS[currentProjectId]) {
+          // Focus on selected object with responsive zoom
+          const { target, zoom } = FOCUS_TARGETS[currentProjectId];
+          // Scale zoom: 100% at 1200px, linearly down to 50% minimum
+          const scaleFactor = Math.min(1, Math.max(0.5, window.innerWidth / 1200));
+          const responsiveZoom = zoom * scaleFactor;
 
-        // Return to responsive zoom level
-        const defaultZoom = typeof window !== 'undefined'
-          ? Math.max(50, Math.min(100, (window.innerWidth / 1600) * 100))
-          : 50;
-        controlsRef.current.zoomTo(defaultZoom, true);
+          controlsRef.current.setTarget(...target, true);
+          controlsRef.current.zoomTo(responsiveZoom, true);
+        } else {
+          // Reset to default view
+          controlsRef.current.setTarget(0, 0, 0, true);
+
+          // Return to responsive zoom level
+          const defaultZoom = getResponsiveZoom();
+          controlsRef.current.zoomTo(defaultZoom, true);
+        }
       }
-    }
+    };
+
+    updateCamera();
+
+    // Add resize listener to update zoom dynamically even when selected
+    window.addEventListener('resize', updateCamera);
+    return () => window.removeEventListener('resize', updateCamera);
   }, [currentProjectId]);
 
   const handlePointerOver = (id: string) => (e: any) => {
@@ -262,7 +273,7 @@ const SceneContent: React.FC<SceneContentProps> = ({ currentProjectId, onProject
         ref={controlsRef}
         // polarAngle={Math.PI / 2}
         // azimuthAngle={0}
-        minZoom={50}
+        minZoom={10}
         maxZoom={150}
         minPolarAngle={.5}
         maxPolarAngle={Math.PI / 2}
@@ -270,9 +281,9 @@ const SceneContent: React.FC<SceneContentProps> = ({ currentProjectId, onProject
         maxAzimuthAngle={1}
         dollySpeed={0} // Disable Scroll Zoom via speed
         mouseButtons={{ left: 1, middle: 0, right: 0, wheel: 0 }} // Disable wheel capture to allow page scroll
-        touches={{ one: 32, two: 0, three: 0 }} // Disable touch zoom to allow page scroll
-        smoothTime={1} // Slower animation
-        enabled={true}
+        touches={{ one: 0, two: 0, three: 0 }} // Disable touch zoom to allow page scroll
+        // On mobile, we want to be extra sure the camera doesn't steal touches
+        enabled={!isMobile}
       />
 
       <LightingController />
@@ -389,6 +400,7 @@ export const Experience: React.FC<ExperienceProps> = (props) => {
         dpr={[1, 2]}
         className="w-full h-full bg-white"
         onPointerMissed={() => props.onProjectSelect(null)}
+        style={{ touchAction: 'pan-y' }}
       >
         <color attach="background" args={['#ffffff']} />
         <React.Suspense fallback={null}>
