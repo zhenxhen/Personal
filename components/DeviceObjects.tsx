@@ -91,7 +91,7 @@ export const XRHeadset: React.FC<DeviceProps> = ({ color, roughness, isSelected,
       <primitive
         object={clone}
         scale={2}
-        rotation={[0, Math.PI / 2 + Math.PI - .8, 0]}
+        rotation={[0, Math.PI + .8, 0]}
       />
     </group>
   );

@@ -38,8 +38,8 @@ const LightingController = () => {
     <>
       <ambientLight intensity={.1} />
       <directionalLight
-        position={[0, -10, 10]}
-        intensity={1}
+        position={[0, 30, 10]}
+        intensity={.1}
         castShadow
         shadow-bias={0}
         shadow-mapSize={[2048, 2048]}
@@ -272,7 +272,7 @@ const SceneContent: React.FC<SceneContentProps> = ({ currentProjectId, onProject
         // azimuthAngle={0}
         minZoom={10}
         maxZoom={150}
-        minPolarAngle={.5}
+        minPolarAngle={.75}
         maxPolarAngle={Math.PI / 2}
         minAzimuthAngle={-1}
         maxAzimuthAngle={1}
