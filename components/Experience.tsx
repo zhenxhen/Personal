@@ -36,7 +36,7 @@ const FOCUS_TARGETS: { [key: string]: { target: [number, number, number], zoom: 
 const LightingController = () => {
   return (
     <>
-      <ambientLight intensity={1} />
+      <ambientLight intensity={.1} />
       <directionalLight
         position={[0, -10, 10]}
         intensity={1}
@@ -68,7 +68,7 @@ const DeskEnvironment = () => {
   return (
     <group position={[0, 0, 0]}>
       {/* Desk Top - Clean White */}
-      <RoundedBox args={[deskWidth, 0.2, deskDepth]} radius={0.02} smoothness={4} position={[0, 0, 0]} receiveShadow>
+      <RoundedBox args={[deskWidth, 0.2, deskDepth]} radius={0.02} smoothness={4} position={[0, 0, 0]} receiveShadow castShadow>
         <meshStandardMaterial color="#f8fafc" roughness={0.1} metalness={0.1} />
       </RoundedBox>
 
@@ -148,6 +148,7 @@ const DeskEnvironment = () => {
         </group>
 
       </group>
+      <ContactShadows position={[0, 0.11, 0]} opacity={0.1} scale={10} blur={1.5} far={4} color="#000000" />
     </group>
   );
 };
@@ -269,7 +270,7 @@ const SceneContent: React.FC<SceneContentProps> = ({ currentProjectId, onProject
         maxAzimuthAngle={1}
         dollySpeed={0} // Disable Scroll Zoom via speed
         mouseButtons={{ left: 1, middle: 0, right: 0, wheel: 0 }} // Disable wheel capture to allow page scroll
-        touches={{ one: 32, two: 0, three: 0 }} // Disable touch zoom to allow page scroll
+        touches={{ one: 0, two: 32, three: 0 }} // One finger scrolls (native), Two fingers rotate
         smoothTime={1} // Slower animation
         enabled={true}
       />
@@ -383,7 +384,13 @@ export const Experience: React.FC<ExperienceProps> = (props) => {
 
   return (
     <>
-      <Canvas shadows dpr={[1, 2]} className="w-full h-full bg-white">
+      <Canvas
+        shadows
+        dpr={[1, 2]}
+        className="w-full h-full bg-white"
+        style={{ touchAction: 'pan-y' }}
+        onPointerMissed={() => props.onProjectSelect(null)}
+      >
         <color attach="background" args={['#ffffff']} />
         <React.Suspense fallback={null}>
           <SceneContent {...props} hoveredId={hoveredId} setHoveredId={setHoveredId} />
