@@ -65,7 +65,7 @@ const useHoverAnimation = (
 
 export const XRHeadset: React.FC<DeviceProps> = ({ color, roughness, isSelected, isHovered, onClick, onPointerOver, onPointerOut }) => {
   const { scene } = useGLTF(`${import.meta.env.BASE_URL}models/XR.glb`);
-  const initialY = -.45;
+  const initialY = -.8;
   const groupRef = useHoverAnimation(initialY, isHovered, isSelected);
 
   const clone = useMemo(() => {
@@ -90,7 +90,7 @@ export const XRHeadset: React.FC<DeviceProps> = ({ color, roughness, isSelected,
     >
       <primitive
         object={clone}
-        scale={2}
+        scale={2.5}
         rotation={[0, Math.PI + .8, 0]}
       />
     </group>
