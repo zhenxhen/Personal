@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { Environment, ContactShadows, OrthographicCamera, CameraControls, RoundedBox, Float, Loader } from '@react-three/drei';
+import { Environment, ContactShadows, OrthographicCamera, CameraControls, RoundedBox, Float } from '@react-three/drei';
 import { PROJECTS, MONITOR_DATA, HEADPHONE_DATA } from '../constants';
 import { DeviceType, Project } from '../types';
 import { XRHeadset, MobilePhone, Tablet, Watch, Monitor, Headphone } from './DeviceObjects';
@@ -402,12 +402,7 @@ export const Experience: React.FC<ExperienceProps> = (props) => {
           <SceneContent {...props} hoveredId={hoveredId} setHoveredId={setHoveredId} />
         </React.Suspense>
       </Canvas>
-      <Loader
-        containerStyles={{ background: 'white' }}
-        innerStyles={{ background: 'white' }}
-        barStyles={{ background: 'black', height: '4px' }}
-        dataStyles={{ color: 'black', fontFamily: 'var(--font-secondary)', fontSize: 'var(--text-small)', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em' }}
-      />
+
 
       {/* Custom Cursor Tooltip */}
       <div

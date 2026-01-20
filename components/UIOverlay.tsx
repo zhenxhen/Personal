@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Project } from '../types';
 import { MousePointer2, ChevronRight, ArrowLeft, ArrowRight, Rotate3D } from 'lucide-react';
+import { useProgress } from '@react-three/drei';
 
 interface UIOverlayProps {
   selectedProject: Project | null;
@@ -20,6 +21,18 @@ export const UIOverlay: React.FC<UIOverlayProps> = ({
   totalCount
 }) => {
   const [isVisible, setIsVisible] = useState(false);
+  const { progress, active } = useProgress();
+  const [hasLoaded, setHasLoaded] = useState(false);
+
+  // Initial load completion handler
+  useEffect(() => {
+    if (progress === 100 && !active) {
+      // Add a small delay for smoother transition after 100%
+      setTimeout(() => {
+        setHasLoaded(true);
+      }, 500);
+    }
+  }, [progress, active]);
 
   useEffect(() => {
     if (selectedProject) {
@@ -39,12 +52,23 @@ export const UIOverlay: React.FC<UIOverlayProps> = ({
       <div
         className={`absolute top-28 md:top-8 left-8 md:left-8 select-none transition-all duration-700 ease-in-out ${selectedProject ? 'opacity-0 -translate-x-12' : 'opacity-100 translate-x-0'}`}
       >
-        <h1 className="title">
-          UX Designer<br /> & Developer
-        </h1>
-        <p className="text mt-4 max-w-xs text-gray-500">
-          I specialize in designing new usability and developing systems across diverse devices and platforms.<br />
-        </p>
+        {!hasLoaded ? (
+          /* Loading State - Text Only */
+          // Note: using tabular-nums ensures width doesn't jump around
+          <h1 className="title tabular-nums">
+            {Math.round(progress)}%
+          </h1>
+        ) : (
+          /* Content State - Appear after load */
+          <div className="animate-fade-in">
+            <h1 className="title">
+              UX Designer<br /> & Developer
+            </h1>
+            <p className="text mt-4 max-w-xs text-gray-500">
+              I specialize in designing new usability and developing systems across diverse devices and platforms.<br />
+            </p>
+          </div>
+        )}
       </div>
 
       {/* 2. Project Content - Slides IN from Right (or appears) when project selected */}
