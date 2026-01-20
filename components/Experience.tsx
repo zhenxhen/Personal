@@ -10,36 +10,29 @@ import * as THREE from 'three';
 interface ExperienceProps {
   currentProjectId: string | null;
   onProjectSelect: (project: Project | null) => void;
-  cameraSettings?: { // Made Optional
-    azimuth: number; // in radians
-    polar: number;   // in radians
-    distance: number; // treated as Zoom level for Orthographic
-    targetY: number; // Vertical offset
-  };
-  onCameraChange?: (settings: { azimuth: number; polar: number; distance: number; targetY: number }) => void;
 }
 
 // Focus Targets for Camera Animation (Calculated from Group + Internal Offsets)
 const FOCUS_TARGETS: { [key: string]: { target: [number, number, number], zoom: number } } = {
   // Hardcoded Objects
-  'monitor': { target: [0, 1.4, -1.0], zoom: 120 },
-  'headphone': { target: [4, 0.37, 0.1], zoom: 120 },
+  'monitor': { target: [0, 1.4, -1.0], zoom: 110 },
+  'headphone': { target: [4, 0.37, 0.1], zoom: 90 },
 
   // Dynamic Projects (Project Position + Device Internal Position)
   'xr-calendar': { target: [2.5, 0.55, -0.5], zoom: 120 },
   'mobile-music': { target: [-2.4, 0.05, -0.7], zoom: 130 },
   'tablet-reminder': { target: [-3.8, 0.02, -0.3], zoom: 100 },
-  'watch-alarm': { target: [-1.8, 0.38, -0.8], zoom: 150 },
+  'watch-alarm': { target: [-1.8, 0.38, -0.8], zoom: 180 },
 };
 
 // Lighting Controller - Static Studio Lighting
 const LightingController = () => {
   return (
     <>
-      <ambientLight intensity={.1} />
+      <ambientLight intensity={.01} />
       <directionalLight
         position={[0, 30, 10]}
-        intensity={.1}
+        intensity={0.1}
         castShadow
         shadow-bias={0}
         shadow-mapSize={[2048, 2048]}
@@ -49,7 +42,7 @@ const LightingController = () => {
       <directionalLight position={[-5, 10, -5]} intensity={0.1} color="#eef2ff" />
 
       {/* Top Light */}
-      <spotLight position={[0, 10, 0]} intensity={0.5} angle={0.5} penumbra={1} castShadow />
+      <spotLight position={[0, 10, 0]} intensity={0.1} angle={0.5} penumbra={1} castShadow />
 
       <Environment preset="studio" blur={1} background={false} />
     </>
@@ -158,34 +151,21 @@ interface SceneContentProps extends ExperienceProps {
   setHoveredId: (id: string | null) => void;
 }
 
-const SceneContent: React.FC<SceneContentProps> = ({ currentProjectId, onProjectSelect, cameraSettings, hoveredId, setHoveredId }) => {
+const SceneContent: React.FC<SceneContentProps> = ({ currentProjectId, onProjectSelect, hoveredId, setHoveredId }) => {
   const controlsRef = useRef<CameraControls>(null);
 
   // Calculate responsive zoom based on window width
   const getResponsiveZoom = () => {
     if (typeof window === 'undefined') return 50;
-    return Math.max(40, Math.min(100, (window.innerWidth / 1600) * 100));
+    // Account for Sidebar width (256px) on desktop
+    const effectiveWidth = window.innerWidth > 768 ? window.innerWidth - 256 : window.innerWidth;
+    return Math.max(40, Math.min(100, (effectiveWidth / 1600) * 100));
   };
 
   const initialZoom = getResponsiveZoom();
 
   // Sync Camera with Settings - Runs ONLY if props are provided (Admin Mode)
-  useEffect(() => {
-    if (controlsRef.current && cameraSettings) {
-      const controls = controlsRef.current;
-      const epsilon = 0.001;
 
-      // Initial Set / Update from Props
-      // We check epsilon to avoid redundant updates if values are close
-      if (Math.abs(controls.azimuthAngle - cameraSettings.azimuth) > epsilon ||
-        Math.abs(controls.polarAngle - cameraSettings.polar) > epsilon) {
-        controls.rotateTo(cameraSettings.azimuth, cameraSettings.polar, true);
-      }
-
-      controls.zoomTo(cameraSettings.distance, true);
-      controls.setTarget(0, cameraSettings.targetY, 0, true);
-    }
-  }, [cameraSettings?.azimuth, cameraSettings?.polar, cameraSettings?.distance, cameraSettings?.targetY]);
 
   // Dynamic Zoom & Position Logic
   useEffect(() => {
@@ -220,8 +200,12 @@ const SceneContent: React.FC<SceneContentProps> = ({ currentProjectId, onProject
         if (currentProjectId && FOCUS_TARGETS[currentProjectId]) {
           // Focus on selected object with responsive zoom
           const { target, zoom } = FOCUS_TARGETS[currentProjectId];
-          // Scale zoom: 100% at 1200px, linearly down to 50% minimum
-          const scaleFactor = Math.min(1, Math.max(0.5, window.innerWidth / 1200));
+          // Calculate effective width (matching layout logic)
+          const effectiveWidth = window.innerWidth > 768 ? window.innerWidth - 256 : window.innerWidth;
+
+          // Scale zoom: 100% at 1200px effective width, linearly down to 60% minimum
+          // User requested proportional scaling for smaller screens
+          const scaleFactor = Math.min(1, Math.max(0.4, effectiveWidth / 1200));
           const responsiveZoom = zoom * scaleFactor;
 
           controlsRef.current.setTarget(...target, true);
@@ -270,7 +254,7 @@ const SceneContent: React.FC<SceneContentProps> = ({ currentProjectId, onProject
         ref={controlsRef}
         // polarAngle={Math.PI / 2}
         // azimuthAngle={0}
-        minZoom={10}
+        minZoom={20}
         maxZoom={150}
         minPolarAngle={1}
         maxPolarAngle={Math.PI / 2}
@@ -285,7 +269,7 @@ const SceneContent: React.FC<SceneContentProps> = ({ currentProjectId, onProject
 
       <LightingController />
 
-      <group position={[0, -1, 0]}>
+      <group position={[0, 1, 0]}>
         <DeskEnvironment />
 
         {/* Monitor - Static Central Piece */}
@@ -380,7 +364,7 @@ export const Experience: React.FC<ExperienceProps> = (props) => {
     'monitor': 'Web Design',
     'headphone': 'PlayGroud🎉',
     'xr-calendar': 'XR UX',
-    'mobile-music': 'App UX',
+    'mobile-music': 'Mobile UX',
     'tablet-reminder': 'Large Screen UX',
     'watch-alarm': 'Wearable UX',
   };
@@ -407,13 +391,13 @@ export const Experience: React.FC<ExperienceProps> = (props) => {
         containerStyles={{ background: 'white' }}
         innerStyles={{ background: 'white' }}
         barStyles={{ background: 'black', height: '4px' }}
-        dataStyles={{ color: 'black', fontWeight: 'bold', fontFamily: 'monospace' }}
+        dataStyles={{ color: 'black', fontFamily: 'var(--font-secondary)', fontSize: 'var(--text-small)', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em' }}
       />
 
       {/* Custom Cursor Tooltip */}
       <div
         ref={tooltipRef}
-        className={`fixed top-0 left-0 pointer-events-none z-50 text-xs font-mono font-bold uppercase tracking-wider text-black bg-white/80 backdrop-blur-sm px-3 py-1.5 rounded-full border border-black/10 shadow-lg transition-opacity duration-200 ${hoveredId ? 'opacity-100' : 'opacity-0'}`}
+        className={`tooltip ${hoveredId ? 'opacity-100' : 'opacity-0'}`}
       >
         {getDeviceName(hoveredId)}
       </div>

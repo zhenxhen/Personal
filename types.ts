@@ -12,7 +12,7 @@ export interface Project {
   title: string;
   category: string;
   deviceType: DeviceType;
-  description: string;
+
   details: string; // Static detailed description
   color: string;
   position: [number, number, number];
