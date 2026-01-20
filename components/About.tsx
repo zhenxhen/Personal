@@ -9,7 +9,7 @@ export const About: React.FC = () => {
                     About
                 </h1>
                 <p className="subtitle text-gray-600 max-w-2xl">
-                    Hello, I'm Jinwon Lee, an Interaction Designer at Samsung Electronics. <br /> I design the moments when technology connects with people.
+                    Hello, I'm Jinwon Lee, an UX Designer at Samsung Electronics. <br /> I design the moments when technology connects with people.
                 </p>
             </header>
 
@@ -106,7 +106,7 @@ export const About: React.FC = () => {
                                 </div>
                                 <p className="text text-gray-600 mb-4">UX Designer <br /> <p className="text-gray-400">Mobile eXperience Division<br />Seoul, South Korea</p></p>
                                 <p className="text text-gray-500">
-                                    6 years of experience in Core UX design for One UI.<br /><br />
+                                    6 years of experience in Core UX for One UI.<br /><br />
 
                                     Maintenance and support of ecosystem applications to maximize productivity.<br /><br />
 
