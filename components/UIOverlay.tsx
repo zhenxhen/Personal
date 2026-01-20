@@ -50,7 +50,7 @@ export const UIOverlay: React.FC<UIOverlayProps> = ({
 
       {/* 1. Intro Content - Slides OUT to Left when project selected */}
       <div
-        className={`absolute top-28 md:top-8 left-8 md:left-8 select-none transition-all duration-700 ease-in-out ${selectedProject ? 'opacity-0 -translate-x-12' : 'opacity-100 translate-x-0'}`}
+        className={`absolute top-28 md:top-8 left-8 right-8 md:left-8 md:right-auto select-none transition-all duration-700 ease-in-out ${selectedProject ? 'opacity-0 -translate-x-12' : 'opacity-100 translate-x-0'}`}
       >
         {!hasLoaded ? (
           /* Loading State - Text Only */
@@ -64,7 +64,7 @@ export const UIOverlay: React.FC<UIOverlayProps> = ({
             <h1 className="title">
               UX Designer<br /> & Developer
             </h1>
-            <p className="text mt-4 max-w-xs text-gray-500">
+            <p className="text mt-4 w-full md:max-w-xs text-gray-500">
               I specialize in designing new usability and developing systems across diverse devices and platforms.<br />
             </p>
           </div>
@@ -74,7 +74,7 @@ export const UIOverlay: React.FC<UIOverlayProps> = ({
       {/* 2. Project Content - Slides IN from Right (or appears) when project selected */}
       {/* Positioned exactly same as Intro */}
       <div
-        className={`absolute top-28 md:top-8 left-8 md:left-8 text-left transition-all duration-700 ease-in-out ${selectedProject ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-12'}`}
+        className={`absolute top-28 md:top-8 left-8 right-8 md:left-8 md:right-auto select-none transition-all duration-700 ease-in-out ${selectedProject ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-12'}`}
       >
         {selectedProject && (
           <div className="max-w-md flex flex-col items-start">

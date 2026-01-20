@@ -22,11 +22,11 @@ export const PLATFORM_CONCEPTS: Project[] = [
   },
   {
     id: 'tablet-reminder',
-    title: 'LargeScreen Experience',
+    title: 'Large-Screen Experience',
     category: 'Productivity',
     deviceType: DeviceType.TABLET,
 
-    details: 'Designs multitasking workflows utilizing tablets and foldable devices. Delivers efficiency across the boundaries of mobile and desktop.',
+    details: 'Designs workflows utilizing tablets and foldable devices. Delivers across the boundaries of mobile and desktop.',
     color: '#3b82f6', // Blue
     position: [1.5, 0.15, 0.2] // Right side on desk
   },
