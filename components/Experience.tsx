@@ -153,6 +153,21 @@ interface SceneContentProps extends ExperienceProps {
 
 const SceneContent: React.FC<SceneContentProps> = ({ currentProjectId, onProjectSelect, hoveredId, setHoveredId }) => {
   const controlsRef = useRef<CameraControls>(null);
+  const [sceneOffset, setSceneOffset] = useState<[number, number, number]>([0, 1, 0]);
+
+  // Handle responsive scene position
+  useEffect(() => {
+    const handleLayoutResize = () => {
+      // Mobile: Move slightly down (-0.5) to avoid overlap with top UI
+      // Desktop: Keep original position (1)
+      const isMobile = window.innerWidth < 768;
+      setSceneOffset(isMobile ? [0, -2, 0] : [0, 1, 0]);
+    };
+
+    handleLayoutResize();
+    window.addEventListener('resize', handleLayoutResize);
+    return () => window.removeEventListener('resize', handleLayoutResize);
+  }, []);
 
   // Calculate responsive zoom based on window width
   const getResponsiveZoom = () => {
@@ -269,7 +284,7 @@ const SceneContent: React.FC<SceneContentProps> = ({ currentProjectId, onProject
 
       <LightingController />
 
-      <group position={[0, 1, 0]}>
+      <group position={sceneOffset}>
         <DeskEnvironment />
 
         {/* Monitor - Static Central Piece */}

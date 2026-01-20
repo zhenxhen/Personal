@@ -31,12 +31,6 @@ body {
     color: #111827;
 }
 
-@media (max-width: 768px) {
-    .title {
-        font-size: 30px;
-        /* Slightly smaller for mobile */
-    }
-}
 
 /* 2. Subtitle - Medium/Large, Medium Weight, Subheadings */
 .subtitle {
@@ -49,12 +43,6 @@ body {
     color: #1f2937;
 }
 
-@media (max-width: 768px) {
-    .title {
-        font-size: 38px;
-        /* Slightly smaller for mobile */
-    }
-}
 
 /* 3. Text - Regular Size, Regular Weight, Body Copy */
 .text {
@@ -75,6 +63,25 @@ body {
     line-height: 1.4;
     letter-spacing: 0.02em;
     color: #9ca3af;
+}
+
+@media (max-width: 768px) {
+    .title {
+        font-size: 24px;
+        /* Slightly smaller for mobile */
+    }
+
+    .subtitle {
+        font-size: 16px;
+    }
+
+    .text {
+        font-size: 14px;
+    }
+
+    .subtext {
+        font-size: 12px;
+    }
 }
 
 /* UTILITIES & COMPONENTS (Non-Typography Specific) */
