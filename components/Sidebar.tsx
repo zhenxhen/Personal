@@ -1,34 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { Menu, X } from 'lucide-react';
 
-export const Sidebar: React.FC = () => {
+interface SidebarProps {
+    onNavigate: (page: string) => void;
+    activePage: 'home' | 'about';
+}
+
+export const Sidebar: React.FC<SidebarProps> = ({ onNavigate, activePage }) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const [activeSection, setActiveSection] = useState('');
 
-    useEffect(() => {
-        const handleScroll = () => {
-            const projectsSection = document.getElementById('projects-section');
-            if (projectsSection) {
-                const rect = projectsSection.getBoundingClientRect();
-                // If the section is somewhat in view (e.g. crossing the middle of the screen or close to top)
-                // Since it's below the fold, if it crosses the 75% viewport height point, we can say we are 'at' it.
-                // Or if it's <= window.innerHeight.
-                // User said "scrolling down including that scroll point".
-                // The scroll target puts the element at the top. So rect.top would be ~0.
-                // Let's use a threshold like window.innerHeight * 0.6 to capture it as it approaches or is fully in view.
-                if (rect.top <= window.innerHeight * 0.6) {
-                    setActiveSection('Projects');
-                } else {
-                    setActiveSection('');
-                }
-            }
-        };
-
-        window.addEventListener('scroll', handleScroll);
-        // Initial check
-        handleScroll();
-        return () => window.removeEventListener('scroll', handleScroll);
-    }, []);
+    // Helper to determine if a link is active based on current page
+    const isActive = (linkName: string) => {
+        if (linkName === 'Projects' && activePage === 'home') return true;
+        if (linkName === 'About' && activePage === 'about') return true;
+        return false;
+    };
 
     const links = [
         { name: 'Projects', href: '#' },
@@ -38,13 +24,24 @@ export const Sidebar: React.FC = () => {
     ];
 
     const handleNavClick = (e: React.MouseEvent, name: string) => {
+        e.preventDefault();
+
         if (name === 'Projects') {
-            e.preventDefault();
-            const element = document.getElementById('projects-section');
-            if (element) {
-                element.scrollIntoView({ behavior: 'smooth' });
-            }
+            onNavigate('home');
+            // Allow state update to propagate then scroll
+            setTimeout(() => {
+                const element = document.getElementById('projects-section');
+                if (element) {
+                    element.scrollIntoView({ behavior: 'smooth' });
+                }
+            }, 100);
+        } else if (name === 'About') {
+            onNavigate('about');
+        } else {
+            // Default behavior for other links if any
         }
+
+        setIsMenuOpen(false);
     };
 
     return (
@@ -52,7 +49,7 @@ export const Sidebar: React.FC = () => {
             {/* Desktop Sidebar */}
             <aside className="hidden md:flex flex-col w-64 h-screen fixed left-0 top-0 bg-white z-50 p-8 border-r border-gray-100">
                 {/* Logo / Title */}
-                <div className="mb-12">
+                <div className="mb-12 cursor-pointer" onClick={() => onNavigate('home')}>
                     <h1 className="subtitle">
                         Jinwon Lee
                     </h1>
@@ -66,7 +63,7 @@ export const Sidebar: React.FC = () => {
                             key={link.name}
                             href={link.href}
                             onClick={(e) => handleNavClick(e, link.name)}
-                            className={`subtitle transition-colors duration-300 ${activeSection === link.name ? 'text-black' : 'text-gray-400 hover:text-black'}`}
+                            className={`subtitle transition-colors duration-300 ${isActive(link.name) ? 'text-black' : 'text-gray-400 hover:text-black'}`}
                         >
                             {link.name}
                         </a>
@@ -80,7 +77,7 @@ export const Sidebar: React.FC = () => {
 
             {/* Mobile Header (retained for mobile responsiveness) */}
             <header className="md:hidden fixed top-0 left-0 w-full z-50 px-8 py-2 flex justify-between items-center bg-white/50 backdrop-blur-sm">
-                <h1 className="subtitle">
+                <h1 className="subtitle" onClick={() => onNavigate('home')}>
                     Jinwon Lee
                 </h1>
                 <button
@@ -111,11 +108,8 @@ export const Sidebar: React.FC = () => {
                                 <a
                                     key={link.name}
                                     href={link.href}
-                                    onClick={(e) => {
-                                        handleNavClick(e, link.name);
-                                        setIsMenuOpen(false);
-                                    }}
-                                    className="subtitle text-black"
+                                    onClick={(e) => handleNavClick(e, link.name)}
+                                    className={`subtitle ${isActive(link.name) ? 'text-black' : 'text-gray-400'}`}
                                 >
                                     {link.name}
                                 </a>
