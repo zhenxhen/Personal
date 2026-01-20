@@ -36,7 +36,7 @@ export const PLATFORM_CONCEPTS: Project[] = [
     category: 'Wearable',
     deviceType: DeviceType.WATCH,
 
-    details: 'The device that understands your context most intimately. Safely and efficiently managing your data, it accompanies you through your daily life.',
+    details: 'The device that understands your context most intimately. Managing user data, it accompanies you through your daily life.',
     color: '#10b981', // Emerald
     position: [0.2, 0.08, 1.2] // Front center on desk
   }

@@ -79,7 +79,7 @@ export const Sidebar: React.FC = () => {
             </aside >
 
             {/* Mobile Header (retained for mobile responsiveness) */}
-            <header className="md:hidden fixed top-0 left-0 w-full z-50 p-8 flex justify-between items-center bg-white/50 backdrop-blur-sm">
+            <header className="md:hidden fixed top-0 left-0 w-full z-50 px-8 py-2 flex justify-between items-center bg-white/50 backdrop-blur-sm">
                 <h1 className="subtitle">
                     Jinwon Lee
                 </h1>
@@ -88,9 +88,9 @@ export const Sidebar: React.FC = () => {
                     className="p-2"
                 >
                     {isMenuOpen ? (
-                        <X className="w-6 h-6 text-black" />
+                        <X className="w-5 h-5 text-black" />
                     ) : (
-                        <Menu className="w-6 h-6 text-black" />
+                        <Menu className="w-5 h-5 text-black" />
                     )}
                 </button>
             </header>
@@ -102,7 +102,7 @@ export const Sidebar: React.FC = () => {
                 onClick={() => setIsMenuOpen(false)}
             >
                 <div
-                    className="w-full bg-white pt-32 pb-8 shadow-sm"
+                    className="w-full bg-white pt-20 pb-8 shadow-sm"
                     onClick={(e) => e.stopPropagation()}
                 >
                     <div className="px-8 flex flex-col">

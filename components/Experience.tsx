@@ -161,7 +161,7 @@ const SceneContent: React.FC<SceneContentProps> = ({ currentProjectId, onProject
       // Mobile: Move slightly down (-0.5) to avoid overlap with top UI
       // Desktop: Keep original position (1)
       const isMobile = window.innerWidth < 768;
-      setSceneOffset(isMobile ? [0, -2, 0] : [0, 1, 0]);
+      setSceneOffset(isMobile ? [0, -1, 0] : [0, 1, 0]);
     };
 
     handleLayoutResize();
