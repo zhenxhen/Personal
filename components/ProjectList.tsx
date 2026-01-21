@@ -10,7 +10,7 @@ export const ProjectList: React.FC = () => {
                         {/* Image Placeholder */}
                         <div className="aspect-[4/3] bg-gray-100 mb-4 overflow-hidden relative">
                             <div className="absolute inset-0 bg-gray-50 group-hover:bg-gray-100 transition-colors duration-500" />
-                            <img src={project.image} alt={project.title} className="relative z-10 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                            <img src={project.image} alt={project.title} className="relative z-10 w-full h-full object-cover transition-all duration-700 ease-in-out transform-gpu group-hover:scale-105" />
                         </div>
 
                         {/* Content */}
