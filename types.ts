@@ -17,3 +17,11 @@ export interface Project {
   color: string;
   position: [number, number, number];
 }
+
+export interface WorkItem {
+  id: string;
+  title: string;
+  category: string;
+  image: string;
+  year: string;
+}

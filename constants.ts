@@ -1,4 +1,4 @@
-import { DeviceType, Project } from './types';
+import { DeviceType, Project, WorkItem } from './types';
 
 export const PLATFORM_CONCEPTS: Project[] = [
   {
@@ -74,4 +74,49 @@ export const NAVIGATION_ORDER = [
   'monitor',
   'xr-calendar',
   'headphone'
+];
+
+export const WORK_ITEMS: WorkItem[] = [
+  {
+    id: 'work-1',
+    title: 'Efficient Daily Experiences',
+    category: 'Reminder App',
+    image: '/Personal/tumbnail/1.png',
+    year: '2025'
+  },
+  {
+    id: 'work-2',
+    title: 'Shared Schedule Experience',
+    category: 'Calendar App',
+    image: '/Personal/tumbnail/2.png',
+    year: '2025'
+  },
+  {
+    id: 'work-3',
+    title: 'Productive Widget Management',
+    category: 'Widget Optimization',
+    image: '/Personal/tumbnail/3.png',
+    year: '2024'
+  },
+  {
+    id: 'work-4',
+    title: 'Aesthetic Time Management',
+    category: 'Clock App',
+    image: '/Personal/tumbnail/4.png',
+    year: '2024'
+  },
+  {
+    id: 'work-5',
+    title: 'Social Critique Computing',
+    category: 'Creative Computing Project',
+    image: '/Personal/tumbnail/5.png',
+    year: '2025'
+  },
+  {
+    id: 'work-6',
+    title: 'Universal Wearable Product',
+    category: 'Wearable Computing Project',
+    image: '/Personal/tumbnail/6.png',
+    year: '2023'
+  }
 ];
