@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, MoveUpRight } from 'lucide-react';
 
 interface SidebarProps {
     onNavigate: (page: string) => void;
-    activePage: 'home' | 'about';
+    activePage: 'home' | 'about' | 'contact';
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({ onNavigate, activePage }) => {
@@ -13,6 +13,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onNavigate, activePage }) => {
     const isActive = (linkName: string) => {
         if (linkName === 'Projects' && activePage === 'home') return true;
         if (linkName === 'About' && activePage === 'about') return true;
+        if (linkName === 'Contact' && activePage === 'contact') return true;
         return false;
     };
 
@@ -37,6 +38,11 @@ export const Sidebar: React.FC<SidebarProps> = ({ onNavigate, activePage }) => {
             }, 100);
         } else if (name === 'About') {
             onNavigate('about');
+        } else if (name === 'Contact') {
+            onNavigate('contact');
+        } else if (name === 'View CV') {
+            window.open('https://drive.google.com/file/d/1m8HhnaSv1ECcNSok6q0YawZzTF1V4cFn/view?usp=sharing', '_blank');
+            return;
         } else {
             // Default behavior for other links if any
         }
@@ -53,7 +59,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onNavigate, activePage }) => {
                     <h1 className="subtitle">
                         Jinwon Lee
                     </h1>
-                    <p className="subtext mt-1">UX Designer & Developer<br></br> Based in London, Seoul</p>
+                    <p className="subtext mt-1">UX Designer & Developer<br />Based in London, Seoul</p>
                 </div>
 
                 {/* Navigation */}
@@ -63,9 +69,14 @@ export const Sidebar: React.FC<SidebarProps> = ({ onNavigate, activePage }) => {
                             key={link.name}
                             href={link.href}
                             onClick={(e) => handleNavClick(e, link.name)}
-                            className={`subtitle transition-colors duration-300 ${isActive(link.name) ? 'text-black' : 'text-gray-400 hover:text-black'}`}
+                            className={`subtitle flex items-center group transition-colors duration-300 ${isActive(link.name) ? 'text-black' : 'text-gray-400 hover:text-black'}`}
                         >
                             {link.name}
+                            {link.name === 'View CV' && (
+                                <span className="inline-block ml-1">
+                                    <MoveUpRight className="w-4 h-4 transition-transform duration-300 group-hover:rotate-45" />
+                                </span>
+                            )}
                         </a>
                     ))}
                 </nav>
@@ -109,9 +120,14 @@ export const Sidebar: React.FC<SidebarProps> = ({ onNavigate, activePage }) => {
                                     key={link.name}
                                     href={link.href}
                                     onClick={(e) => handleNavClick(e, link.name)}
-                                    className={`subtitle ${isActive(link.name) ? 'text-black' : 'text-gray-400'}`}
+                                    className={`subtitle flex items-center group ${isActive(link.name) ? 'text-black' : 'text-gray-400'}`}
                                 >
                                     {link.name}
+                                    {link.name === 'View CV' && (
+                                        <span className="inline-block ml-1">
+                                            <MoveUpRight className="w-4 h-4 transition-transform duration-300 group-hover:rotate-45" />
+                                        </span>
+                                    )}
                                 </a>
                             ))}
                         </nav>

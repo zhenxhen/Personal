@@ -4,21 +4,22 @@ import { UIOverlay } from './components/UIOverlay';
 import { Sidebar } from './components/Sidebar';
 import { ProjectList } from './components/ProjectList';
 import { About } from './components/About';
+import { Contact } from './components/Contact';
 import { Project } from './types';
 import { PROJECTS, NAVIGATION_ORDER, MONITOR_DATA, HEADPHONE_DATA } from './constants';
 
 const App: React.FC = () => {
   const [currentProject, setCurrentProject] = useState<Project | null>(null);
-  const [currentView, setCurrentView] = useState<'home' | 'about'>('home');
+  const [currentView, setCurrentView] = useState<'home' | 'about' | 'contact'>('home');
 
   const handleProjectSelect = (project: Project | null) => {
     setCurrentProject(project);
   };
 
   const handleNavigation = (page: string) => {
-    if (page === 'home' || page === 'about') {
-      setCurrentView(page as 'home' | 'about');
-      if (page === 'about') {
+    if (page === 'home' || page === 'about' || page === 'contact') {
+      setCurrentView(page as 'home' | 'about' | 'contact');
+      if (page === 'about' || page === 'contact') {
         setCurrentProject(null); // Clear selection when going to about
       }
       // Reset scroll position to top on navigation
@@ -85,9 +86,12 @@ const App: React.FC = () => {
               totalCount={NAVIGATION_ORDER.length}
             />
           </>
-        ) : (
+        ) : currentView === 'about' ? (
           /* About Page */
           <About />
+        ) : (
+          /* Contact Page */
+          <Contact />
         )}
 
         {/* Global Branding - Hide in Admin Mode to reduce clutter? Or Keep? Keeping for context. */}
